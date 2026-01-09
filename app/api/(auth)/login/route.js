@@ -4,6 +4,7 @@ import logAudit from "@/lib/audit.js"
 import User from "@/models/auth/user.js"
 import bcrypt from "bcryptjs"
 import { createSession } from "@/lib/auth.js"
+import Session from "@/models/auth/session.js"
 
 export async function POST(request) {
     try {
@@ -30,6 +31,24 @@ export async function POST(request) {
         const ipAddress = request.headers.get("x-forwarded-for") || "unknown";
         const userAgent = request.headers.get("user-agent") || "unknown";
 
+        const existingSession = await Session.findOne({
+            user: user._id,
+            userAgent,
+            ipAddress
+        });
+
+        if (existingSession) {
+            return NextResponse.json({
+                message: "Login successful",
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                },
+                session: existingSession
+            });
+        }
         const session = await createSession(user._id, ipAddress, userAgent);
 
         // Log Audit
