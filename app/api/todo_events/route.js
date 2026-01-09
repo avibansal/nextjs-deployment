@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db.js";
 import Task from "@/models/todo/task.js";
+import { getSession } from "@/lib/auth.js";
 
 export async function GET(request) {
     try {
+        const session = await getSession();
+        if (!session) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         await dbConnect()
-        const tasks = await Task.find({ isDeleted: { $ne: true } })
+        const tasks = await Task.find({ user: session.user._id, isDeleted: { $ne: true } })
 
         return NextResponse.json({
             message: "GET request received",
@@ -13,17 +19,23 @@ export async function GET(request) {
         })
     }
     catch (error) {
+        console.error("Error in GET request:", error);
         return NextResponse.json({
             message: "Error in GET request"
-        })
+        }, { status: 500 })
     }
 }
 
 export async function POST(request) {
     try {
+        const session = await getSession();
+        if (!session) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         await dbConnect()
         const body = await request.json()
-        const task = await Task.create(body)
+        const task = await Task.create({ ...body, user: session.user._id })
         return NextResponse.json({
             message: "POST request received",
             content: task
@@ -31,15 +43,21 @@ export async function POST(request) {
 
     }
     catch (error) {
+        console.error("Error in POST request:", error);
         return NextResponse.json({
             message: "Error in POST request",
             error: error.message
-        })
+        }, { status: 500 })
     }
 }
 
 export async function DELETE(request) {
     try {
+        const session = await getSession();
+        if (!session) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         await dbConnect()
         const id = request.nextUrl.searchParams.get("id")
         if (!id) {
@@ -48,7 +66,9 @@ export async function DELETE(request) {
                 status: 400
             })
         }
-        const task = await Task.findByIdAndUpdate(id, { isDeleted: true },
+        const task = await Task.findOneAndUpdate(
+            { _id: id, user: session.user._id },
+            { isDeleted: true },
             {
                 new: true,
                 runValidators: true
@@ -66,21 +86,27 @@ export async function DELETE(request) {
         })
     }
     catch (error) {
+        console.error("Error in DELETE request:", error);
         return NextResponse.json({
             message: "Error in DELETE request",
             error: error.message
-        })
+        }, { status: 500 })
     }
 }
 
 export async function PUT(request) {
     try {
+        const session = await getSession();
+        if (!session) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         await dbConnect()
         const body = await request.json()
         const id = body.id
 
         const task = await Task.findOneAndUpdate(
-            { _id: id, isDeleted: { $ne: true } },
+            { _id: id, user: session.user._id, isDeleted: { $ne: true } },
             body,
             {
                 new: true,
@@ -101,9 +127,10 @@ export async function PUT(request) {
 
     }
     catch (error) {
+        console.error("Error in PUT request:", error);
         return NextResponse.json({
             message: "Error in PUT request",
             error: error.message
-        })
+        }, { status: 500 })
     }
 }

@@ -3,7 +3,7 @@ import dbConnect from "@/lib/db.js";
 import logAudit from "@/lib/audit.js"
 import User from "@/models/auth/user.js"
 import bcrypt from "bcryptjs"
-import { createSession } from "@/lib/auth.js"
+import { createSession, getSession } from "@/lib/auth.js"
 import Session from "@/models/auth/session.js"
 
 export async function POST(request) {
@@ -27,16 +27,7 @@ export async function POST(request) {
             return NextResponse.json({ error: "Invalid password" }, { status: 401 });
         }
 
-        // Create Session
-        const ipAddress = request.headers.get("x-forwarded-for") || "unknown";
-        const userAgent = request.headers.get("user-agent") || "unknown";
-
-        const existingSession = await Session.findOne({
-            user: user._id,
-            userAgent,
-            ipAddress
-        });
-
+        const existingSession = await getSession();
         if (existingSession) {
             return NextResponse.json({
                 message: "Login successful",
@@ -49,6 +40,12 @@ export async function POST(request) {
                 session: existingSession
             });
         }
+
+
+        // Create Session
+        const ipAddress = request.headers.get("x-forwarded-for") || "unknown";
+        const userAgent = request.headers.get("user-agent") || "unknown";
+
         const session = await createSession(user._id, ipAddress, userAgent);
 
         // Log Audit

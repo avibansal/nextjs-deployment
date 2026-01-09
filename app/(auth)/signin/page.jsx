@@ -1,7 +1,10 @@
 "use client"
+import { NextResponse } from "next/server";
 import React from 'react'
+import { useRouter } from "next/navigation";
 
 export default function page() {
+    const router = useRouter();
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -20,6 +23,7 @@ export default function page() {
             .then(response => response.json())
             .then(data => {
                 console.log(data)
+                router.push("/todo")
             })
             .catch(error => {
                 console.log(error)
