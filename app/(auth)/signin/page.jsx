@@ -10,7 +10,20 @@ export default function page() {
         const email = formData.get('username')
         const password = formData.get('password')
 
-        console.log(email, password)
+        fetch("/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }
 
     return (
