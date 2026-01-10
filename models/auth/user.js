@@ -10,9 +10,16 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: [true, "Please provide a password"],
+        required: false, // Optional for Google SSO users
         trim: true,
     },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true, // Allows multiple users to have null googleId
+    },
+    googleAccessToken: String,
+    googleRefreshToken: String,
     name: {
         type: String,
         required: [true, "Please provide a name"],
