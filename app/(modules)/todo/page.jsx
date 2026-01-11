@@ -52,7 +52,7 @@ export default function Page() {
 
     return (
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <div className='flex flex-col items-center bg-linear-to-br from-zinc-200 via-neutral-200 to-stone-200 h-screen'>
+            <div className='flex flex-col items-center bg-zinc-100 h-screen'>
                 <div className="inline-block bg-linear-to-br from-white via-zinc-50 to-neutral-100/80 px-10 py-6 rounded-3xl shadow-lg ring-1 ring-neutral-200/30 mt-6">
                     <h1 className="text-5xl font-bold text-stone-700 mb-3 font-sans">
                         Weekly Todo List

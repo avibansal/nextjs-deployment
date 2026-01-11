@@ -85,7 +85,7 @@ export default function page() {
     }
 
     return (
-        <div className='flex flex-col items-center justify-center bg-linear-to-br from-zinc-200 via-neutral-200 to-stone-200 h-screen'>
+        <div className='flex flex-col items-center justify-center bg-zinc-100 h-screen'>
             <DecorativeGrid />
             <div className='relative z-10 w-3/12'>
                 <h1 className="text-3xl font-bold text-stone-700 font-sans p-6 text-center">

@@ -6,7 +6,7 @@ export default function Logout() {
             method: "POST",
         });
         if (response.ok) {
-            window.location.href = "/login";
+            window.location.href = "/signin";
         }
     };
     return (
