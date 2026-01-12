@@ -1,6 +1,6 @@
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
 
 const geistSans = Inter({
   variable: "--font-geist-sans",
@@ -21,12 +21,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`bg-zinc-100 ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={` flex ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
-        <main className="max-w-7xl mx-auto px-6 py-8">
+        <div className="sticky top-0 h-screen">
+          <Sidebar />
+        </div>
+        <div className="flex-1">
           {children}
-        </main>
+        </div>
+
       </body>
     </html>
   );
