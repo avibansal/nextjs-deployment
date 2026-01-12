@@ -23,9 +23,7 @@ export default function RootLayout({ children }) {
       <body
         className={` flex ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="sticky top-0 h-screen">
-          <Sidebar />
-        </div>
+        <Sidebar />
         <div className="flex-1">
           {children}
         </div>

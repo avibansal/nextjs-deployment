@@ -5,17 +5,17 @@ import dbConnect from "@/lib/db";
 import { createSession } from "@/lib/auth";
 import logAudit from "@/lib/audit";
 
-const redirectUri = process.env.NEXT_PUBLIC_BASE_URL
-    ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback/google`
-    : "http://localhost:3000/api/auth/callback/google";
-
-const client = new OAuth2Client(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    redirectUri
-);
-
 export async function GET(request) {
+    const origin = request.nextUrl.origin;
+    const redirectUri = process.env.NEXT_PUBLIC_BASE_URL
+        ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback/google`
+        : `${origin}/api/auth/callback/google`;
+
+    const client = new OAuth2Client(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        redirectUri
+    );
     const { searchParams } = new URL(request.url);
     const code = searchParams.get("code");
 
@@ -79,8 +79,8 @@ export async function GET(request) {
             ipAddress
         });
 
-        // 6. Redirect to Todo app
-        return NextResponse.redirect(new URL("/todo", request.url));
+        // 6. Redirect to Home
+        return NextResponse.redirect(new URL("/", request.nextUrl.origin));
 
     } catch (error) {
         console.error("Google SSO Callback Error:", error);

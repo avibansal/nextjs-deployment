@@ -4,7 +4,7 @@ export function middleware(request) {
     const token = request.cookies.get("session_token")?.value;
     const { pathname } = request.nextUrl;
 
-    // 1. If user is logged in and tries to access /signin, redirect to /todo
+    // 1. If user is logged in and tries to access /signin, redirect to /
     if (token && pathname === "/signin") {
         return NextResponse.redirect(new URL("/", request.url));
     }
@@ -23,5 +23,5 @@ export function middleware(request) {
 
 // This control when middleware runs
 export const config = {
-    matcher: ["/", "/todo/:path*", "/youtube/:path*"],
+    matcher: ["/", "/todo/:path*", "/youtube/:path*", "/signin"],
 };
